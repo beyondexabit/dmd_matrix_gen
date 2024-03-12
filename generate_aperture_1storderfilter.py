@@ -9,6 +9,16 @@ def rescale_matrix(matrix, new_min, new_max):
     old_min, old_max = matrix.min(), matrix.max()
     return (new_max - new_min) / (old_max - old_min) * (matrix - old_min) + new_min
 
+def aperture_calc_ints(Nx, Ny, aperture_x_1, aperture_x_2, aperture_y_1, aperture_y_2):
+    large_matrix = np.zeros((Nx, Ny))
+
+    aperture = np.ones((aperture_y_2 - aperture_y_1, aperture_x_2 - aperture_x_1))
+
+    large_matrix[aperture_y_1:aperture_y_2, aperture_x_1:aperture_x_2] = aperture
+    rotated_arr = np.rot90(large_matrix, k=1)    
+    
+    return rotated_arr
+
 def aperture_calc(Nx, Ny, extent_x, extent_y, aperture_x_1, aperture_x_2, aperture_y_1, aperture_y_2):
     large_matrix = np.zeros((Nx, Ny))
     segment_x = aperture_x_2 - aperture_x_1
@@ -30,55 +40,31 @@ extent_x = 30e-3
 extent_y = 30e-3
 Nx = 2048
 Ny = 2048
-aperture_x_1 = 1e-3
-aperture_x_2 = 3.5e-3
+'''
+aperture_x_1 = -4e-3
+aperture_x_2 = 4e-3
 aperture_y_1 = -1.5e-3
 aperture_y_2 = 1.5e-3
-
 result_matrix = aperture_calc(Nx, Ny, extent_x, extent_y, aperture_x_1, aperture_x_2, aperture_y_1, aperture_y_2)
 result_matrix = rescale_matrix(result_matrix, 0, 255)   
-np.save(f'/Users/jakubkostial/Documents/phd/code/ff_project/matrix_generation_dmd/repo/dmd_matrix_gen/masks/testgrating_ti.npy', result_matrix)
+'''
+
+sep = 15
+aperture_x_1 = 0
+aperture_x_2 = 2048
+aperture_y_1 = 1024 - sep
+aperture_y_2 = 1024 + sep
 
 
 
-
-sys.exit()
-
-
-
-
-
-
-# Place the rescaled matrix in the center of the larger matrix
-
-
-
-
-
-
-large_matrix[center_y:center_y + matrix_new.shape[0], center_x:center_x + matrix_new.shape[1]] = matrix_new
-
-large_matrix = rescale_matrix(large_matrix, 0, 255)
-
+result_matrix = aperture_calc_ints(Nx, Ny, aperture_x_1, aperture_x_2, aperture_y_1, aperture_y_2)
+result_matrix = rescale_matrix(result_matrix, 0, 255)   
 
 plt.figure()
-plt.imshow(large_matrix, cmap='viridis', interpolation='nearest')
-plt.show()
+plt.imshow(result_matrix, cmap='viridis', interpolation='nearest')
+#plt.show()
 
 
-np.save(f'/Users/jakubkostial/Documents/phd/code/ff_project/matrix_generation_dmd/repo/dmd_matrix_gen/masks/aperture1st.npy', large_matrix)
+np.save(f'/Users/jakubkostial/Documents/phd/code/ff_project/matrix_generation_dmd/repo/narrow_slit_30pix.npy', result_matrix)
 
-
-
-
-# slm pitch: 8.0 um  ////  8* (54 * 4 = 216) = 1728 um ////1920 x 1080
-# dmd pitch: 10.8 um //// 10.8* (40 * 4 = 160) = 1728 um  ////1280 x 800  
-
-# dmd
-macropixel_width = 160
-macropixel_seperation = 80
-
-# slm
-macropixel_width = 216
-macropixel_seperation = 108
 

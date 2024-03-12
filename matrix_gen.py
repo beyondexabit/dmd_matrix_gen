@@ -23,7 +23,7 @@ def generate_intensity_pattern(input_matrix, macropixel_width, macropixel_sepera
     threshold = 0.5  # This is an arbitrary choice for demonstration; adjust as needed
     elements = input_matrix[0]
 
-    n_rows = 1080  # Number of rows in the matrix
+    n_rows = 800  # Number of rows in the matrix
     n_cols = macropixel_width  # Number of columns in the matrix, matching the distribution resolution
 
     pattern = np.zeros((n_rows, len(elements) * macropixel_width + (len(elements) - 1) * macropixel_seperation))
@@ -54,9 +54,9 @@ def generate_intensity_pattern(input_matrix, macropixel_width, macropixel_sepera
 # Example usage
 
 # make sure to only input 1d array
-input_matrix = np.array([[1, 0.75, 0.5, 0.25]])
-macropixel_width = 150
-macropixel_seperation = 100
+input_matrix = np.array([[1, 1]])
+macropixel_width = 160
+macropixel_seperation = 80
 scaling_factor = 100
 
 matrix_new = generate_intensity_pattern(input_matrix, macropixel_width, macropixel_seperation, scaling_factor)
@@ -65,7 +65,7 @@ matrix_new = generate_intensity_pattern(input_matrix, macropixel_width, macropix
 # Rescale matrix between 0 and 128
 
 # Create a 1920x1080 matrix initialized to 0
-large_matrix = np.zeros((1080, 1920))
+large_matrix = np.zeros((800, 1200))
 
 # Calculate center coordinates
 center_x = (large_matrix.shape[1] - matrix_new.shape[1]) // 2
@@ -79,5 +79,20 @@ plt.imshow(large_matrix, cmap='viridis', interpolation='nearest')
 plt.title('Transform')
 plt.show()
 
+large_matrix = rescale_matrix(large_matrix, 0, 255)
 
-#np.savetxt(f'/Users/jakubkostial/Documents/phd/code/loop_matmul/repo/formatted_matrices/saw_test_phase_pattern_150mp_{grating_frequency_x}gf.csv', large_matrix, delimiter=',')
+
+np.save(f'/Users/jakubkostial/Documents/phd/code/ff_project/matrix_generation_dmd/repo/dmd_matrix_gen/masks/testgrating_ti.npy', large_matrix)
+
+
+# slm pitch: 8.0 um  ////  8* (54 * 4 = 216) = 1728 um ////1920 x 1080
+# dmd pitch: 10.8 um //// 10.8* (40 * 4 = 160) = 1728 um  ////1280 x 800  
+
+# dmd
+macropixel_width = 160
+macropixel_seperation = 80
+
+# slm
+macropixel_width = 216
+macropixel_seperation = 108
+
